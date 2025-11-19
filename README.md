@@ -59,10 +59,7 @@ Verify Deployment
 
 !<img width="1882" height="166" alt="image" src="https://github.com/user-attachments/assets/36108d6a-9d86-4d80-a259-b454025208f5" />
 
-![image](https://github.com/user-attachments/assets/7b2cf81b-5e4e-4467-9589-59842bb0f872)
 
-
-![image](https://github.com/user-attachments/assets/dea0baa5-2246-4412-81cb-27f7d717d9d6)
 Notes
 
 Environment variable QDRANT__CONSENSUS__PEERS is configured in StatefulSet YAML to define master and replica nodes.
