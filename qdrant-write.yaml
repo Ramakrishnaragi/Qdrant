@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant-write
+  namespace: qdrant
+spec:
+  selector:
+    statefulset.kubernetes.io/pod-name: qdrant-0
+  ports:
+  - name: http
+    port: 6333
+    targetPort: 6333
+

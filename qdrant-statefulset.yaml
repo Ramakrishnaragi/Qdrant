@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qdrant
+  namespace: qdrant
+spec:
+  serviceName: qdrant
+  replicas: 3
+  selector:
+    matchLabels:
+      app: qdrant
+  template:
+    metadata:
+      labels:
+        app: qdrant
+    spec:
+      containers:
+        - name: qdrant
+          image: qdrant/qdrant:latest
+          ports:
+            - containerPort: 6333  # Qdrant API port
+            - containerPort: 6334  # Consensus port
+          env:
+            - name: QDRANT__SERVICE__ENABLE_AUTH
+              value: "true"
+            - name: QDRANT__SERVICE__ENABLE_JWT
+              value: "true"
+            - name: QDRANT__SERVICE__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: qdrant-api-keys
+                  key: ADMIN_KEY
+            - name: QDRANT__SERVICE__API_KEY_READ_ONLY
+              valueFrom:
+                secretKeyRef:
+                  name: qdrant-api-keys
+                  key: READ_ONLY_KEY
+            - name: QDRANT__CONSENSUS__PEERS
+              value: "qdrant-0.qdrant:6334,qdrant-1.qdrant:6334,qdrant-2.qdrant:6334"
+          volumeMounts:
+            - name: config
+              mountPath: /qdrant/config
+            - name: storage
+              mountPath: /qdrant/storage
+
+      volumes:
+        - name: config
+          configMap:
+            name: qdrant-config
+
+  volumeClaimTemplates:
+    - metadata:
+        name: storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: gp2   # Ensure this matches your cluster
+        resources:
+          requests:
+            storage: 5Gi
+
